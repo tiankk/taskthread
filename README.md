@@ -1,5 +1,5 @@
 ## Introduction
-TaskThread is a library for multi-thread programming on windows(xp+) platform.
+TaskThread is a c++ library for multi-threads programming on windows(xp+) platform.
 
 ## Features
 * Well wrapped interface.
