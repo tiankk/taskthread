@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\runnable">
+      <UniqueIdentifier>{d68d5f7a-a29c-444b-be0f-069569dd1f4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\interface">
+      <UniqueIdentifier>{9163b549-a1b6-4457-92bc-3f6016615515}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\thread_pool">
+      <UniqueIdentifier>{c1c2079c-a588-4b7c-b690-6033de9c8547}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\util">
+      <UniqueIdentifier>{eef6d5c2-3b1b-49c3-b470-4d048a5548ce}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\bind.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sync_task_runnable.h">
+      <Filter>Source Files\runnable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\async_task_runnable.h">
+      <Filter>Source Files\runnable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\message_sender_runnable.h">
+      <Filter>Source Files\runnable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\runnable_base.h">
+      <Filter>Source Files\runnable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sync_closure_runnable.h">
+      <Filter>Source Files\runnable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\async_closure_runnable.h">
+      <Filter>Source Files\runnable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cancellable_runnable.h">
+      <Filter>Source Files\runnable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scoped_ptr.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ref_counted.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\callback_internal.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\callback.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bind_internal.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bind_helpers.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\atomic_ops.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\async_runnable_task_callback_interface.h">
+      <Filter>Source Files\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\async_runnable_msg_callback_interface.h">
+      <Filter>Source Files\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\const_define.h">
+      <Filter>Source Files\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thread_pool.h">
+      <Filter>Source Files\thread_pool</Filter>
+    </ClInclude>
+    <ClInclude Include="src\task_thread.h">
+      <Filter>Source Files\thread_pool</Filter>
+    </ClInclude>
+    <ClInclude Include="src\static_thread_pool.h">
+      <Filter>Source Files\thread_pool</Filter>
+    </ClInclude>
+    <ClInclude Include="src\runonce_thread_pool.h">
+      <Filter>Source Files\thread_pool</Filter>
+    </ClInclude>
+    <ClInclude Include="src\notifier_pool.h">
+      <Filter>Source Files\thread_pool</Filter>
+    </ClInclude>
+    <ClInclude Include="src\notifier.h">
+      <Filter>Source Files\thread_pool</Filter>
+    </ClInclude>
+    <ClInclude Include="src\return_value_type.h">
+      <Filter>Source Files\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\task_thread_export.h">
+      <Filter>Source Files\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\async_runnable_callback_base.h">
+      <Filter>Source Files\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scoped_ref_ptr.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\msg_receiver_interface.h">
+      <Filter>Source Files\thread_pool</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cancellable_runnable_reference.h">
+      <Filter>Source Files\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\autolock.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\def.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\iocp.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ref_ptr_flag.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\runnable_base.cpp">
+      <Filter>Source Files\runnable</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ref_counted.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\callback_internal.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\task_thread_export.cpp">
+      <Filter>Source Files\interface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\thread_pool.cpp">
+      <Filter>Source Files\thread_pool</Filter>
+    </ClCompile>
+    <ClCompile Include="src\task_thread.cpp">
+      <Filter>Source Files\thread_pool</Filter>
+    </ClCompile>
+    <ClCompile Include="src\static_thread_pool.cpp">
+      <Filter>Source Files\thread_pool</Filter>
+    </ClCompile>
+    <ClCompile Include="src\runonce_thread_pool.cpp">
+      <Filter>Source Files\thread_pool</Filter>
+    </ClCompile>
+    <ClCompile Include="src\notifier_pool.cpp">
+      <Filter>Source Files\thread_pool</Filter>
+    </ClCompile>
+    <ClCompile Include="src\notifier.cpp">
+      <Filter>Source Files\thread_pool</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cancellable_runnable_reference.cpp">
+      <Filter>Source Files\interface</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,9 @@
+*.user
+*.sdf
+*.suo
+*.ipch
+*.opensdf
+*.tlog
+*.obj
+
+/out
