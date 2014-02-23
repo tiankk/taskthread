@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>TaskThread by tiankk</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>TaskThread</h1>
+          <h2>TaskThread is a library for multi-thread programming on windows(xp+) platform.</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/tiankk/taskthread/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/tiankk/taskthread/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/tiankk/taskthread" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h2>
+<a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h2>
+
+<p>TaskThread is a library for multi-thread programming on windows(xp+) platform.</p>
+
+<h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li>Well wrapped interface.</li>
+<li>Well memory management.</li>
+<li>Integrate with UI thread easily.</li>
+<li>Based on IOCP.</li>
+<li>Task cancel support.</li>
+</ul><h2>
+<a name="how-to-use" class="anchor" href="#how-to-use"><span class="octicon octicon-link"></span></a>How to use</h2>
+
+<h3>
+<a name="general" class="anchor" href="#general"><span class="octicon octicon-link"></span></a>General</h3>
+
+<ol>
+<li>Add TaskThread Project to your solution.</li>
+<li>Include <code>src/task_thread_export.h</code>.</li>
+<li>
+<p>Modify <code>tthread::THREAD_ID</code> enum in <code>src/const_define.h</code> to add new static thread id.<br>
+Sample:<br>
+Original enum:      </p>
+
+<div class="highlight highlight-cpp"><pre><span class="k">namespace</span> <span class="n">tthread</span>
+<span class="p">{</span>
+    <span class="k">enum</span> <span class="n">THREAD_ID</span>
+    <span class="p">{</span>
+        <span class="n">STATIC_THREAD_START</span><span class="p">,</span>  <span class="c1">// add static thread id below</span>
+        <span class="n">DEFAULT</span><span class="p">,</span>
+        <span class="n">STATIC_THREAD_END</span><span class="p">,</span> <span class="c1">// add static thread id above</span>
+        <span class="n">RUNONCE</span> <span class="o">=</span> <span class="mi">1024</span>
+    <span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Add <code>USER_DEF</code>:</p>
+
+<div class="highlight highlight-cpp"><pre><span class="k">namespace</span> <span class="n">tthread</span>
+<span class="p">{</span>
+    <span class="k">enum</span> <span class="n">THREAD_ID</span>
+    <span class="p">{</span>
+        <span class="n">STATIC_THREAD_START</span><span class="p">,</span>  <span class="c1">// add static thread id below</span>
+        <span class="n">DEFAULT</span><span class="p">,</span>
+        <span class="n">USER_DEF</span><span class="p">,</span>
+        <span class="n">STATIC_THREAD_END</span><span class="p">,</span> <span class="c1">// add static thread id above</span>
+        <span class="n">RUNONCE</span> <span class="o">=</span> <span class="mi">1024</span>
+    <span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+</li>
+<li>
+<p>Call <code>tthread::AsyncTask()</code>.</p>
+
+<ol>
+<li>Pass your function/method to <code>tthread::Bind()</code>, build task object for task parameter of <code>tthread::AsyncTask()</code>.</li>
+<li>Set another parameters if necessary. For instance, thread id parameter decide which thread will be run the task. You have defined one or more in step 3. </li>
+</ol>
+</li>
+<li>Build and run your exe. The function/method you passed to the <code>tthread::Bind()</code> will be run in the static thread referenced by thread id you have defined and passed to.</li>
+</ol><h3>
+<a name="tthreadbind" class="anchor" href="#tthreadbind"><span class="octicon octicon-link"></span></a><code>tthread::Bind()</code>
+</h3>
+
+<ol>
+<li>This Bind() function comes from chromium.</li>
+<li>The max number of parameters is <strong>7</strong>.</li>
+<li>Declaring <code>tthread::utility::Callback&lt;&gt;</code> or <code>tthread::utility::Closure</code> to get return value is no necessary generally. Just pass <code>tthread::Bind()</code> to <code>tthread::AsyncTask()</code> or <code>tthread::SyncTask()</code> as one parameter directly. In general, namespace <code>tthread::utility</code> is not used.</li>
+</ol><p>Sample:   </p>
+
+<ul>
+<li>
+<p>Bind function:   </p>
+
+<div class="highlight highlight-cpp"><pre><span class="kt">int</span> <span class="nf">Return5</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="mi">5</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">tthread</span><span class="o">::</span><span class="n">utility</span><span class="o">::</span><span class="n">Callback</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">func_cb</span> <span class="o">=</span> <span class="n">tthread</span><span class="o">::</span><span class="n">Bind</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Return5</span><span class="p">);</span>
+<span class="n">LOG</span><span class="p">(</span><span class="n">INFO</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">func_cb</span><span class="p">.</span><span class="n">Run</span><span class="p">();</span>  <span class="c1">// Prints 5.</span>
+
+<span class="kt">void</span> <span class="nf">PrintHi</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">LOG</span><span class="p">(</span><span class="n">INFO</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">"hi."</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">tthread</span><span class="o">::</span><span class="n">utility</span><span class="o">::</span><span class="n">Closure</span> <span class="n">void_func_cb</span> <span class="o">=</span> <span class="n">tthread</span><span class="o">::</span><span class="n">Bind</span><span class="p">(</span><span class="o">&amp;</span><span class="n">PrintHi</span><span class="p">);</span>
+<span class="n">void_func_cb</span><span class="p">.</span><span class="n">Run</span><span class="p">();</span>  <span class="c1">// Prints: hi.</span>
+</pre></div>
+</li>
+<li>
+<p>Bind method of reference-counted class:</p>
+
+<div class="highlight highlight-cpp"><pre><span class="k">class</span> <span class="nc">Ref</span> <span class="o">:</span> <span class="k">public</span> <span class="n">tthread</span><span class="o">::</span><span class="n">RefCountedThreadSafe</span><span class="o">&lt;</span><span class="n">Ref</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="kt">int</span> <span class="n">Foo</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">3</span><span class="p">;</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">PrintBye</span><span class="p">()</span> <span class="p">{</span> <span class="n">LOG</span><span class="p">(</span><span class="n">INFO</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">"bye."</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="n">tthread</span><span class="o">::</span><span class="n">ScopedRefPtr</span><span class="o">&lt;</span><span class="n">Ref</span><span class="o">&gt;</span> <span class="n">ref</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Ref</span><span class="p">();</span>
+<span class="n">tthread</span><span class="o">::</span><span class="n">utility</span><span class="o">::</span><span class="n">Callback</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">ref_cb</span> <span class="o">=</span> <span class="n">tthread</span><span class="o">::</span><span class="n">Bind</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Ref</span><span class="o">::</span><span class="n">Foo</span><span class="p">,</span> <span class="n">ref</span><span class="p">.</span><span class="n">get</span><span class="p">());</span>
+<span class="n">LOG</span><span class="p">(</span><span class="n">INFO</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">ref_cb</span><span class="p">.</span><span class="n">Run</span><span class="p">();</span>  <span class="c1">// Prints out 3.</span>
+
+<span class="n">tthread</span><span class="o">::</span><span class="n">utility</span><span class="o">::</span><span class="n">Closure</span> <span class="n">void_ref_cb</span> <span class="o">=</span> <span class="n">tthread</span><span class="o">::</span><span class="n">Bind</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Ref</span><span class="o">::</span><span class="n">PrintBye</span><span class="p">,</span> <span class="n">ref</span><span class="p">.</span><span class="n">get</span><span class="p">());</span>
+<span class="n">void_ref_cb</span><span class="p">.</span><span class="n">Run</span><span class="p">();</span>  <span class="c1">// Prints: bye.</span>
+</pre></div>
+</li>
+<li>
+<p>Bind method:
+<strong>WARNING</strong>: Must be sure object's lifecycle is long enough to run its method. </p>
+
+<div class="highlight highlight-cpp"><pre><span class="k">class</span> <span class="nc">NoRef</span> <span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="kt">int</span> <span class="n">Foo</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">4</span><span class="p">;</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">PrintWhy</span><span class="p">()</span> <span class="p">{</span> <span class="n">LOG</span><span class="p">(</span><span class="n">INFO</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">"why???"</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="n">NoRef</span> <span class="n">no_ref</span><span class="p">;</span>
+<span class="n">tthread</span><span class="o">::</span><span class="n">utility</span><span class="o">::</span><span class="n">Callback</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">no_ref_cb</span> <span class="o">=</span> <span class="n">tthread</span><span class="o">::</span><span class="n">Bind</span><span class="p">(</span><span class="o">&amp;</span><span class="n">NoRef</span><span class="o">::</span><span class="n">Foo</span><span class="p">,</span> <span class="n">tthread</span><span class="o">::</span><span class="n">Unretained</span><span class="p">(</span><span class="o">&amp;</span><span class="n">no_ref</span><span class="p">));</span>
+<span class="n">LOG</span><span class="p">(</span><span class="n">INFO</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">ref_cb</span><span class="p">.</span><span class="n">Run</span><span class="p">();</span>  <span class="c1">// Prints out 4.</span>
+
+<span class="n">tthread</span><span class="o">::</span><span class="n">utility</span><span class="o">::</span><span class="n">Closure</span> <span class="n">void_no_ref_cb</span> <span class="o">=</span> <span class="n">tthread</span><span class="o">::</span><span class="n">Bind</span><span class="p">(</span><span class="o">&amp;</span><span class="n">NoRef</span><span class="o">::</span><span class="n">PrintWhy</span><span class="p">,</span> <span class="n">tthread</span><span class="o">::</span><span class="n">Unretained</span><span class="p">(</span><span class="o">&amp;</span><span class="n">no_ref</span><span class="p">));</span>
+<span class="n">void_no_ref_cb</span><span class="p">.</span><span class="n">Run</span><span class="p">();</span>  <span class="c1">// Prints: why???</span>
+</pre></div>
+</li>
+<li>
+<p>Bind reference:</p>
+
+<div class="highlight highlight-cpp"><pre><span class="kt">int</span> <span class="nf">Identity</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">n</span><span class="p">;</span> <span class="p">}</span>
+<span class="kt">int</span> <span class="n">value</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="n">tthread</span><span class="o">::</span><span class="n">utility</span><span class="o">::</span><span class="n">Callback</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">bound_copy_cb</span> <span class="o">=</span> <span class="n">tthread</span><span class="o">::</span><span class="n">Bind</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Identity</span><span class="p">,</span> <span class="n">value</span><span class="p">);</span>
+<span class="n">tthread</span><span class="o">::</span><span class="n">utility</span><span class="o">::</span><span class="n">Callback</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">bound_ref_cb</span> <span class="o">=</span> <span class="n">tthread</span><span class="o">::</span><span class="n">Bind</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Identity</span><span class="p">,</span> <span class="n">tthread</span><span class="o">::</span><span class="n">ConstRef</span><span class="p">(</span><span class="n">value</span><span class="p">));</span>
+<span class="n">LOG</span><span class="p">(</span><span class="n">INFO</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">bound_copy_cb</span><span class="p">.</span><span class="n">Run</span><span class="p">();</span>  <span class="c1">// Prints 1.</span>
+<span class="n">LOG</span><span class="p">(</span><span class="n">INFO</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">bound_ref_cb</span><span class="p">.</span><span class="n">Run</span><span class="p">();</span>  <span class="c1">// Prints 1.</span>
+
+<span class="n">value</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="n">LOG</span><span class="p">(</span><span class="n">INFO</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">bound_copy_cb</span><span class="p">.</span><span class="n">Run</span><span class="p">();</span>  <span class="c1">// Prints 1.</span>
+<span class="n">LOG</span><span class="p">(</span><span class="n">INFO</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">bound_ref_cb</span><span class="p">.</span><span class="n">Run</span><span class="p">();</span>  <span class="c1">// Prints 2.</span>
+</pre></div>
+</li>
+<li>
+<p>Curry func:</p>
+
+<div class="highlight highlight-cpp"><pre><span class="kt">int</span> <span class="nf">Sum</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">,</span> <span class="kt">int</span> <span class="n">c</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">tthread</span><span class="o">::</span><span class="n">utility</span><span class="o">::</span><span class="n">Callback</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">sum3_cb</span> <span class="o">=</span> <span class="n">tthread</span><span class="o">::</span><span class="n">Bind</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Sum</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+<span class="n">LOG</span><span class="p">(</span><span class="n">INFO</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">sum3_cb</span><span class="p">.</span><span class="n">Run</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>  <span class="c1">// Prints 12.</span>
+
+<span class="n">tthread</span><span class="o">::</span><span class="n">utility</span><span class="o">::</span><span class="n">Callback</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">sum7_cb</span> <span class="o">=</span> <span class="n">tthread</span><span class="o">::</span><span class="n">Bind</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Sum</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+<span class="n">LOG</span><span class="p">(</span><span class="n">INFO</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">sum7_cb</span><span class="p">.</span><span class="n">Run</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>  <span class="c1">// Prints 17.</span>
+</pre></div>
+</li>
+</ul><h3>
+<a name="asynchronous-callback" class="anchor" href="#asynchronous-callback"><span class="octicon octicon-link"></span></a>Asynchronous callback</h3>
+
+<ol>
+<li>
+<p>There are two callback type according to which thread will be run the callback function.</p>
+
+<ol>
+<li>If callback function run in <strong>task thread</strong>, you should derive from <code>tthread::IAsyncRunnableTaskCallback</code>.</li>
+<li>If callback funciton run in <strong>UI thread</strong>, you should derive form <code>tthread::IAsyncRunnableMsgCallback</code>.</li>
+<li>Implement <code>void OnAsyncComplete(ScopedRefPtr&lt;ReturnValue&gt; ret, const tstring&amp; identifier)</code> function. <code>ret</code> is return value. And you can distinguish invoke point by <code>identifier</code>.<br>
+</li>
+</ol>
+<p>Sample:   </p>
+
+<div class="highlight highlight-cpp"><pre><span class="k">class</span> <span class="nc">UserTaskCallBack</span> <span class="o">:</span> <span class="k">public</span> <span class="n">tthread</span><span class="o">::</span><span class="n">IAysncRunnableTaskCallback</span>
+<span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="kt">void</span> <span class="n">OnAsyncComplete</span><span class="p">(</span><span class="n">ScopedRefPtr</span><span class="o">&lt;</span><span class="n">ReturnValue</span><span class="o">&gt;</span> <span class="n">ret</span><span class="p">,</span> <span class="k">const</span> <span class="n">tstring</span><span class="o">&amp;</span> <span class="n">identifier</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">identifier</span> <span class="o">==</span> <span class="n">_T</span><span class="p">(</span><span class="s">"get_value"</span><span class="p">))</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">ret</span><span class="o">-&gt;</span><span class="n">default_ret_</span> <span class="o">==</span> <span class="mi">123</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="c1">// do something</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</li>
+<li>
+<p>Wrap your function/method to support return value.</p>
+
+<ol>
+<li>The return type of the wrapped function is <code>void</code>.</li>
+<li>If function/method have many parameters, return value parameter <strong>must be</strong> the last one.</li>
+<li>The <strong>max</strong> number of parameters is <strong>7</strong>. But, <strong>do not</strong> forget that <code>this</code> pointer is the first parameter for method. So the max number of parameters for method is <strong>6</strong>.</li>
+<li>
+<code>tthread::ReturnValue</code> <strong>should not</strong> wrapped by <code>tthread::ScopedRefPtr</code>, if so, callback function running in UI thread may be crash.<br>
+</li>
+</ol>
+<p>Sample:   </p>
+
+<p>Original function:</p>
+
+<div class="highlight highlight-cpp"><pre><span class="kt">int</span> <span class="nf">get_value</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="mi">123</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Wrapped function:</p>
+
+<div class="highlight highlight-cpp"><pre><span class="kt">void</span> <span class="nf">async_get_value</span><span class="p">(</span><span class="n">tthread</span><span class="o">::</span><span class="n">ReturnValue</span> <span class="o">*</span> <span class="n">ret</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">ret</span><span class="p">.</span><span class="n">default_ret_</span> <span class="o">=</span> <span class="n">get_value</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</li>
+<li>
+<p>Build wrapped function <code>async_get_value</code> to task by <code>tthread::Bind()</code> and pass it to <code>thread::AsyncTask()</code>.  Also, pass callback object pointer or smart pointer object to <code>thread::AsyncTask()</code>.<br>
+Sample:</p>
+
+<div class="highlight highlight-cpp"><pre><span class="n">tthread</span><span class="o">::</span><span class="n">ScopedRetPtr</span><span class="o">&lt;</span><span class="n">UserTaskCallBack</span><span class="o">&gt;</span> <span class="n">user_task_callback</span> <span class="o">=</span> <span class="k">new</span> <span class="n">UserTaskCallBack</span><span class="p">;</span>
+
+<span class="c1">// some logic</span>
+
+<span class="n">tthread</span><span class="o">::</span><span class="n">AsyncTask</span><span class="o">&lt;</span><span class="n">tthread</span><span class="o">::</span><span class="n">ReturnValue</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_T</span><span class="p">(</span><span class="s">"get_value"</span><span class="p">),</span> <span class="n">tthread</span><span class="o">::</span><span class="n">Bind</span><span class="p">(</span><span class="n">async_get_value</span><span class="p">),</span> <span class="n">tthread</span><span class="o">::</span><span class="n">USER_DEF</span><span class="p">,</span> <span class="n">user_task_callback</span><span class="p">.</span><span class="n">get</span><span class="p">());</span>
+</pre></div>
+</li>
+<li><p><code>tthread::IAsyncRunnableTaskCallback</code> support smart pointer, so it is safe after you call <code>tthread::AysncTask()</code>.</p></li>
+<li>
+<code>tthread::IAsyncRunnableMsgCallback</code> <strong>does not</strong> support smart pointer, so you should insure that callback object lifecycle is long enough until callback function is called. Why it does not support? Because this callback object is usually the main window object, tthread should not manage its lifecycle. Of course, if it is not the main window object, you can make it support smart pointer, just derived from <code>tthread::RefCountedThreadSafe</code>.</li>
+</ol><h3>
+<a name="user-defined-return-value-type" class="anchor" href="#user-defined-return-value-type"><span class="octicon octicon-link"></span></a>User-defined return value type</h3>
+
+<ol>
+<li>Three return value types(ReturnValue/StringReturnValue/IntReturnValue) are already in library. See <code>src/return_value_type.h</code><br>
+</li>
+<li>
+<p>User can define new type by derived from <code>tthread::ReturnValue</code>.   </p>
+
+<p>Sample:   </p>
+
+<div class="highlight highlight-cpp"><pre><span class="k">struct</span> <span class="n">UserType</span>
+<span class="p">{</span>
+    <span class="c1">// some members</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="n">UserTypeReturnValue</span> <span class="o">:</span> <span class="k">public</span> <span class="n">tthread</span><span class="o">::</span><span class="n">ReturnValue</span>
+<span class="p">{</span>
+    <span class="n">UserType</span> <span class="n">user_</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</li>
+<li>
+<p>In wrapped function/method or callback function <code>OnAsyncComplete()</code>, you should cast <code>tthread::ReturnValue</code> pointer to <code>UserTypeReturnValue</code> pointer.   </p>
+
+<p>Sample:   </p>
+
+<div class="highlight highlight-cpp"><pre><span class="n">UserTypeReturnValue</span><span class="o">*</span> <span class="n">p</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">UserTypeReturnValue</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">ret</span><span class="p">.</span><span class="n">get</span><span class="p">());</span>
+</pre></div>
+</li>
+<li>
+<p>When you call <code>tthread::Bind()</code>, you should <strong>never</strong> create <code>UserTypeReturnValue</code> object and pass the pointer to <code>tthread::Bind()</code>. TaskThread will create it automatically. Just like the sample below.</p>
+
+<p>Sample:</p>
+
+<div class="highlight highlight-cpp"><pre><span class="n">tthread</span><span class="o">::</span><span class="n">Bind</span><span class="p">(</span><span class="n">async_get_value</span><span class="p">);</span>
+</pre></div>
+</li>
+</ol><h3>
+<a name="user-defined-context-parameter-type" class="anchor" href="#user-defined-context-parameter-type"><span class="octicon octicon-link"></span></a>User-defined context parameter type</h3>
+
+<ol>
+<li>
+<p>Sometimes, context parameters are stored for refering in callback function or using in whatever logic.<br>
+Sample:<br>
+One int value should be stored.   </p>
+
+<div class="highlight highlight-cpp"><pre><span class="k">struct</span> <span class="n">IntReturnParam</span> <span class="o">:</span> <span class="k">public</span> <span class="n">tthread</span><span class="o">::</span><span class="n">ReturnParam</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">stored_int_</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Wrapped function:</p>
+
+<div class="highlight highlight-cpp"><pre><span class="kt">void</span> <span class="nf">async_get_value</span><span class="p">(</span><span class="n">tthread</span><span class="o">::</span><span class="n">ScopedRefPtr</span><span class="o">&lt;</span><span class="n">tthread</span><span class="o">::</span><span class="n">ReturnParam</span><span class="o">&gt;</span> <span class="n">param</span><span class="p">,</span> <span class="n">ReturnValue</span><span class="o">*</span> <span class="n">ret</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">ret</span><span class="p">.</span><span class="n">param_</span> <span class="o">=</span> <span class="n">param</span><span class="p">;</span>
+    <span class="n">ret</span><span class="p">.</span><span class="n">default_ret_</span> <span class="o">=</span> <span class="n">get_value</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Call <code>tthread::AsyncTask()</code>:</p>
+
+<div class="highlight highlight-cpp"><pre><span class="n">tthread</span><span class="o">::</span><span class="n">ScopedRetPtr</span><span class="o">&lt;</span><span class="n">UserTaskCallBack</span><span class="o">&gt;</span> <span class="n">user_task_cb</span> <span class="o">=</span> <span class="k">new</span> <span class="n">UserTaskCallBack</span><span class="p">;</span>
+
+<span class="c1">// some logic</span>
+
+<span class="n">IntReturnParam</span><span class="o">*</span> <span class="n">p</span> <span class="o">=</span> <span class="k">new</span> <span class="n">IntReturnParam</span><span class="p">;</span>
+<span class="n">p</span><span class="o">-&gt;</span><span class="n">stored_int_</span> <span class="o">=</span> <span class="mi">1234</span><span class="p">;</span>
+<span class="n">tthread</span><span class="o">::</span><span class="n">AsyncTask</span><span class="o">&lt;</span><span class="n">UserTypeReturnValue</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_T</span><span class="p">(</span><span class="s">"user_logic"</span><span class="p">),</span> <span class="n">tthread</span><span class="o">::</span><span class="n">Bind</span><span class="p">(</span><span class="n">aysnc_get_value</span><span class="p">,</span> <span class="n">p</span><span class="p">),</span> <span class="n">tthread</span><span class="o">::</span><span class="n">USER_DEF</span><span class="p">,</span> <span class="n">user_task_cb</span><span class="p">.</span><span class="n">get</span><span class="p">());</span>
+</pre></div>
+
+<p>Use context parameter in callback function:</p>
+
+<div class="highlight highlight-cpp"><pre><span class="k">class</span> <span class="nc">UserTaskCallBack</span> <span class="o">:</span> <span class="k">public</span> <span class="n">tthread</span><span class="o">::</span><span class="n">IAysncRunnableTaskCallback</span>
+<span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="kt">void</span> <span class="n">OnAsyncComplete</span><span class="p">(</span><span class="n">ScopedRefPtr</span><span class="o">&lt;</span><span class="n">ReturnValue</span><span class="o">&gt;</span> <span class="n">ret</span><span class="p">,</span> <span class="k">const</span> <span class="n">tstring</span><span class="o">&amp;</span> <span class="n">identifier</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">identifier</span> <span class="o">==</span> <span class="n">_T</span><span class="p">(</span><span class="s">"user_logic"</span><span class="p">))</span>
+        <span class="p">{</span>
+            <span class="n">IntReturnParam</span><span class="o">*</span> <span class="n">param</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">IntReturnParam</span><span class="o">&gt;</span><span class="p">(</span><span class="n">ret</span><span class="o">-&gt;</span><span class="n">param_</span><span class="p">.</span><span class="n">get</span><span class="p">())</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">param</span><span class="o">-&gt;</span><span class="n">stored_int_</span> <span class="o">==</span> <span class="mi">1234</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="c1">// some logic</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</li>
+<li><p>Again, You should <strong>never</strong> create and pass the return value object pointer to <code>tthread::Bind()</code>.</p></li>
+<li>The context parameter pointer passed to <code>tthread::AysncTask()</code> will be recycle automatilcally. <strong>Do not</strong> delele it by yourself.</li>
+</ol><h3>
+<a name="integrate-with-ui-thread" class="anchor" href="#integrate-with-ui-thread"><span class="octicon octicon-link"></span></a>Integrate with UI thread</h3>
+
+<ol>
+<li>
+<p>As said in <a href="#Asynchronous%20callback">Asynchronous callback</a>, if callback class is derived from <code>tthread::IAsyncRunnableMsgCallback</code> and its instance is initiated in UI thread(main thread), callback function will run in UI thread(main thread).
+Sample:</p>
+
+<div class="highlight highlight-cpp"><pre><span class="k">class</span> <span class="nc">UserMsgCallback</span> <span class="o">:</span> <span class="k">public</span> <span class="n">tthread</span><span class="o">::</span><span class="n">IAsyncRunnableMsgCallback</span>
+<span class="p">{</span>
+    <span class="kt">void</span> <span class="n">OnAsyncComplete</span><span class="p">(</span><span class="n">ScopedRefPtr</span><span class="o">&lt;</span><span class="n">ReturnValue</span><span class="o">&gt;</span> <span class="n">ret</span><span class="p">,</span> <span class="k">const</span> <span class="n">tstring</span><span class="o">&amp;</span> <span class="n">identifier</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// some logic</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// some logic</span>
+
+<span class="n">UserMsgCallback</span> <span class="n">user_msg_callback</span><span class="p">;</span> <span class="c1">// in UI thread(main thread)</span>
+
+<span class="c1">// some logic</span>
+
+<span class="n">tthread</span><span class="o">::</span><span class="n">AsyncTask</span><span class="o">&lt;</span><span class="n">tthread</span><span class="o">::</span><span class="n">ReturnValue</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_T</span><span class="p">(</span><span class="s">"get_value"</span><span class="p">),</span> <span class="n">tthread</span><span class="o">::</span><span class="n">Bind</span><span class="p">(</span><span class="n">async_get_value</span><span class="p">),</span> <span class="n">tthread</span><span class="o">::</span><span class="n">USER_DEF</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">user_msg_callback</span><span class="p">);</span>
+
+</pre></div>
+
+<p>Again, as said in <a href="#Asynchronous%20callback">Asynchronous callback</a>, <code>tthread::AsyncRunnableMsgCallback</code> <strong>does not</strong> support smart pointer, you should manage lifecycle of callback objcet and make sure it is exist when callback function is called.</p>
+</li>
+<li>Also, you can use <code>tthread::AsyncMessage()</code> interface to send <code>tthread::ReturnValue</code> object or other user-defined return value object to the UI thread(main thread) directly, without triggering callback function by one task. The <code>tthread::ReturnValue</code> object here is just one message.</li>
+</ol><h3>
+<a name="tthreadrunonce-thread" class="anchor" href="#tthreadrunonce-thread"><span class="octicon octicon-link"></span></a><code>tthread::RUNONCE</code> thread</h3>
+
+<ol>
+<li>There are two types thread, one is static thread, the another is runonce thread.</li>
+<li>
+<strong>Static threads</strong> can referened by <code>tthread::THREAD_ID</code>. You can get it everywhere during whole lifecycle by <code>tthread::THREAD_ID</code>.</li>
+<li>
+<strong>Runonce threads</strong> just run one task every time. You can never insure that the runonce thread you get this time is the one you have got last time. </li>
+<li>All runonce threads managed in a thread pool. The threads in sleep state will be reused next time.</li>
+</ol><h3>
+<a name="tthreadasyncmessage" class="anchor" href="#tthreadasyncmessage"><span class="octicon octicon-link"></span></a><code>tthread::AsyncMessage()</code>
+</h3>
+
+<p><a href="#Integrate%20with%20UI%20thread">Integrate with UI thread</a> has mentioned that you can send message to trigger callback function in UI thread. Except that, you also can send message to task thread. It is depending on the type of callback object. See <a href="#Asynchronous%20callback">Asynchronous callback</a>.
+Sample:</p>
+
+<div class="highlight highlight-cpp"><pre><span class="k">class</span> <span class="nc">UserMsgCallback</span> <span class="o">:</span> <span class="k">public</span> <span class="n">tthread</span><span class="o">::</span><span class="n">IAsyncRunnableMsgCallback</span>
+<span class="p">{</span>
+    <span class="kt">void</span> <span class="n">OnAsyncComplete</span><span class="p">(</span><span class="n">ScopedRefPtr</span><span class="o">&lt;</span><span class="n">ReturnValue</span><span class="o">&gt;</span> <span class="n">ret</span><span class="p">,</span> <span class="k">const</span> <span class="n">tstring</span><span class="o">&amp;</span> <span class="n">identifier</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// some logic</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// some logic</span>
+
+<span class="n">UserMsgCallback</span> <span class="n">user_msg_callback</span><span class="p">;</span> <span class="c1">// in UI thread(main thread)</span>
+
+<span class="c1">// some logic</span>
+
+<span class="n">tthread</span><span class="o">::</span><span class="n">ReturnValue</span><span class="o">*</span> <span class="n">msg</span> <span class="o">=</span> <span class="k">new</span> <span class="n">tthread</span><span class="o">::</span><span class="n">ReturnValue</span><span class="p">;</span>
+<span class="n">msg</span><span class="p">.</span><span class="n">default_ret_</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="n">tthread</span><span class="o">::</span><span class="n">AsyncMessage</span><span class="p">(</span><span class="n">_T</span><span class="p">(</span><span class="s">"this_is_a_msg"</span><span class="p">),</span> <span class="n">msg</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">user_msg_callback</span><span class="p">);</span>
+</pre></div>
+
+<div class="highlight highlight-cpp"><pre><span class="k">class</span> <span class="nc">UserTaskCallback</span> <span class="o">:</span> <span class="k">public</span> <span class="n">tthread</span><span class="o">::</span><span class="n">IAsyncRunnableTaskCallback</span>
+<span class="p">{</span>
+    <span class="kt">void</span> <span class="n">OnAsyncComplete</span><span class="p">(</span><span class="n">ScopedRefPtr</span><span class="o">&lt;</span><span class="n">ReturnValue</span><span class="o">&gt;</span> <span class="n">ret</span><span class="p">,</span> <span class="k">const</span> <span class="n">tstring</span><span class="o">&amp;</span> <span class="n">identifier</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// some logic</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// some logic</span>
+
+<span class="n">tthread</span><span class="o">::</span><span class="n">ScopedRefPtr</span><span class="o">&lt;</span><span class="n">UserTaskCallback</span><span class="o">&gt;</span> <span class="n">user_task_callback</span> <span class="o">=</span> <span class="k">new</span> <span class="n">UserTaskCallback</span><span class="p">;</span>
+
+<span class="c1">// some logic</span>
+
+<span class="n">tthread</span><span class="o">::</span><span class="n">ReturnValue</span><span class="o">*</span> <span class="n">msg</span> <span class="o">=</span> <span class="k">new</span> <span class="n">tthread</span><span class="o">::</span><span class="n">ReturnValue</span><span class="p">;</span>
+<span class="n">msg</span><span class="p">.</span><span class="n">default_ret_</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="n">tthread</span><span class="o">::</span><span class="n">AsyncMessage</span><span class="p">(</span><span class="n">_T</span><span class="p">(</span><span class="s">"this_is_a_msg"</span><span class="p">),</span> <span class="n">msg</span><span class="p">,</span> <span class="n">user_task_callback</span><span class="p">.</span><span class="n">get</span><span class="p">(),</span> <span class="n">tthread</span><span class="o">::</span><span class="n">USER_DEF</span><span class="p">);</span>
+</pre></div>
+
+<p><strong>Do not</strong> delete message by yourself. It will be recycled automatically.</p>
+
+<p>Again, as said in <a href="#Aysnchronous%20callback">Asynchronous callback</a>, <code>tthread::AsyncRunnableMsgCallback</code> <strong>does not</strong> support smart pointer, you should manage lifecycle of callback objcet and make sure it is exist when callback function is called.</p>
+
+<h3>
+<a name="tthreadsynctask" class="anchor" href="#tthreadsynctask"><span class="octicon octicon-link"></span></a><code>tthread::SyncTask()</code>
+</h3>
+
+<p>If you want to run task in other thread then wait for it in invoke thread, you should use this interface. When task finishes, <code>tthread::SyncTask()</code> will return <code>tthread::ScopedRefPtr&lt;tthread::ReturnValue&gt;</code> object directly.</p>
+
+<h3>
+<a name="quit" class="anchor" href="#quit"><span class="octicon octicon-link"></span></a>Quit</h3>
+
+<ul>
+<li>There are two interfaces for quit: <code>tthread::SafeQuit()</code> and <code>tthread::SafeEmergencyQuit()</code>.</li>
+<li>Once you invoke one of two, you <strong>can not</strong> send tasks to the task queue managed by IOCP.</li>
+<li>
+<code>tthread::SafeQuit()</code> quit all threads after all tasks in queue have been run.</li>
+<li>
+<code>tthread::SafeEmergencyQuit()</code> quit all threads without running tasks in queue.</li>
+</ul><h2>
+<a name="common-use-elements" class="anchor" href="#common-use-elements"><span class="octicon octicon-link"></span></a>Common use elements</h2>
+
+<p>Details about these elements, please read source code.</p>
+
+<h3>
+<a name="header" class="anchor" href="#header"><span class="octicon octicon-link"></span></a>Header</h3>
+
+<p><code>src/task_thread_export.h</code></p>
+
+<h3>
+<a name="namespace" class="anchor" href="#namespace"><span class="octicon octicon-link"></span></a>Namespace</h3>
+
+<p><code>tthread</code></p>
+
+<h3>
+<a name="function" class="anchor" href="#function"><span class="octicon octicon-link"></span></a>Function</h3>
+
+<div class="highlight highlight-cpp"><pre><span class="n">tthread</span><span class="o">::</span><span class="n">Bind</span><span class="p">()</span>
+
+<span class="n">tthread</span><span class="o">::</span><span class="n">AsyncTask</span><span class="p">()</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">ReturnValueType</span><span class="o">&gt;</span>
+<span class="n">tthread</span><span class="o">::</span><span class="n">AsyncTask</span><span class="o">&lt;</span><span class="n">ReturnValueType</span><span class="o">&gt;</span><span class="p">()</span>
+
+<span class="n">tthread</span><span class="o">::</span><span class="n">AsyncMessage</span><span class="p">()</span>
+
+<span class="n">tthread</span><span class="o">::</span><span class="n">SyncTask</span><span class="p">()</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">ReturnValueType</span><span class="o">&gt;</span>
+<span class="n">tthread</span><span class="o">::</span><span class="n">SyncTask</span><span class="o">&lt;</span><span class="n">ReturnValueType</span><span class="o">&gt;</span><span class="p">()</span>
+</pre></div>
+
+<h3>
+<a name="base-class" class="anchor" href="#base-class"><span class="octicon octicon-link"></span></a>Base Class</h3>
+
+<div class="highlight highlight-cpp"><pre><span class="n">tthread</span><span class="o">::</span><span class="n">ReturnValue</span>
+
+<span class="n">tthread</span><span class="o">::</span><span class="n">ReturnParam</span>
+
+<span class="n">tthread</span><span class="o">::</span><span class="n">IAsyncRunnableCallbackBase</span>
+
+<span class="n">tthread</span><span class="o">::</span><span class="n">IAsyncRunnableMsgCallback</span>
+
+<span class="n">tthread</span><span class="o">::</span><span class="n">IAsyncRunnableTaskCallback</span>
+</pre></div>
+
+<h3>
+<a name="enum" class="anchor" href="#enum"><span class="octicon octicon-link"></span></a>Enum</h3>
+
+<div class="highlight highlight-cpp"><pre><span class="n">tthread</span><span class="o">::</span><span class="n">THREAD_ID</span>
+</pre></div>
+
+<h3>
+<a name="utils" class="anchor" href="#utils"><span class="octicon octicon-link"></span></a>Utils</h3>
+
+<div class="highlight highlight-cpp"><pre><span class="n">tthread</span><span class="o">::</span><span class="n">RefCountedThreadSafe</span>
+
+<span class="n">tthread</span><span class="o">::</span><span class="n">StringReturnValue</span>
+
+<span class="n">tthread</span><span class="o">::</span><span class="n">IntReturnValue</span>
+
+<span class="n">tthread</span><span class="o">::</span><span class="n">ScopedRefPtr</span>
+
+<span class="n">tthread</span><span class="o">::</span><span class="n">ScopedPtr</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="n">tthread</span><span class="o">::</span><span class="n">Unretained</span><span class="p">()</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="n">tthread</span><span class="o">::</span><span class="n">ConstRef</span><span class="p">()</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="n">tthread</span><span class="o">::</span><span class="n">IgnoreResult</span><span class="p">()</span>
+</pre></div>
+
+<h1>
+<a name="demo" class="anchor" href="#demo"><span class="octicon octicon-link"></span></a>Demo</h1>
+
+<p>See demo project.</p>
+
+<h1>
+<a name="feedback" class="anchor" href="#feedback"><span class="octicon octicon-link"></span></a>Feedback</h1>
+
+<p>Send mail to <a href="mailto:tiankk@gmail.com">tiankk@gmail.com</a>.</p>
+
+<h1>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h1>
+
+<p>MIT</p>
+        </section>
+
+        <footer>
+          TaskThread is maintained by <a href="https://github.com/tiankk">tiankk</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+                  <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-48348102-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+      </div>
+    </div>
+  </body>
+</html>
