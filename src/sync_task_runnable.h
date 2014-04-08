@@ -92,7 +92,7 @@ namespace tthread
             }
 
         private:
-            TaskThread* run_thread_;
+            IThreadTask* run_thread_;
             HANDLE response_event_handle_;
             ReturnValueType* ret_;
             Callback<void(ReturnValueType*)> func_;

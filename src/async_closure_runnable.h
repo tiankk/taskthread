@@ -100,7 +100,7 @@ namespace tthread
             }
 
         private:
-            TaskThread* run_thread_;
+            IThreadTask* run_thread_;
             Closure closure_;
             long id_;
             bool emergency_run_;

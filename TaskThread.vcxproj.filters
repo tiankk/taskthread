@@ -137,12 +137,6 @@
     <ClCompile Include="src\runnable_base.cpp">
       <Filter>Source Files\runnable</Filter>
     </ClCompile>
-    <ClCompile Include="src\ref_counted.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="src\callback_internal.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
     <ClCompile Include="src\task_thread_export.cpp">
       <Filter>Source Files\interface</Filter>
     </ClCompile>

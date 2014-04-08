@@ -30,15 +30,34 @@ static struct Dbg_Mem_Leak_Check
 #endif
 #endif  // _DETECT_MEM_LEAK
 
+#ifndef TASKTHREAD_LIB
+#ifdef TASKTHREAD_DLL
+#define TASKTHREAD_API _declspec(dllexport)
+#define TASKTHREAD_CLASS _declspec(dllexport)
+#else
+#define TASKTHREAD_API _declspec(dllimport)
+#define TASKTHREAD_CLASS _declspec(dllimport)
+#endif
+#else
+#define TASKTHREAD_API
+#define TASKTHREAD_CLASS
+#endif
+
 
 namespace tthread
 {
     namespace utility
     {
+#ifndef TASKTHREAD_LIB
+        template class TASKTHREAD_CLASS ScopedRefPtr<utility::StaticThreadPool>;
+        template class TASKTHREAD_CLASS ScopedRefPtr<utility::RunOnceThreadPool>;
+        template class TASKTHREAD_CLASS ScopedRefPtr<utility::NotifierPool>;
+#endif // TASKTHREAD_DLL
+
         /**
         *    @biref:    interfaces for thread pools management
         */
-        class ThreadPool
+        class TASKTHREAD_CLASS ThreadPool
         {
         public:
             /**
@@ -47,14 +66,7 @@ namespace tthread
             *    @param:       THREAD_ID id
             *    @return:      TaskThread&
             */
-            static TaskThread* GetThread(THREAD_ID id)
-            {
-                if (id == RUNONCE)
-                {
-                    return runonce_pool_->GetThread();
-                }
-                return static_pool_->GetThread(id);
-            }
+            static TaskThread* GetThread(THREAD_ID id);
 
             /**
             *    @brief:       Get static thread pointer.
@@ -62,20 +74,14 @@ namespace tthread
             *    @param:       THREAD_ID id
             *    @return:      TaskThread&
             */
-            static TaskThread* GetStaticThread(THREAD_ID id)
-            {
-                return static_pool_->GetThread(id);
-            }
+            static TaskThread* GetStaticThread(THREAD_ID id);
 
             /**
             *    @brief:       Get runonce thread pinter.
             *    @method:      GetRunOnceThread
             *    @return:      TaskThread&
             */
-            static TaskThread* GetRunOnceThread()
-            {
-                return runonce_pool_->GetThread();
-            }
+            static TaskThread* GetRunOnceThread();
 
             /**
             *    @brief:       Register MsgReceiver and get window handle and window message id
@@ -86,40 +92,28 @@ namespace tthread
             *    @param        unsigned int id      id of notifier. if id is 0, real id is ::GetCurrentThreadId().
             *    @return:      void
             */
-            static void RegisterMsgReceiver(IMsgReceiver* msg_evt, HWND& wnd, UINT& msg, unsigned int id = 0)
-            {
-                notifier_pool_->Register(msg_evt, wnd, msg, id);
-            }
+            static void RegisterMsgReceiver(IMsgReceiver* msg_evt, HWND& wnd, UINT& msg, unsigned int id = 0);
 
             /**
             *    @brief:       Unregister MsgReceiver
             *    @method:      UnRegisterMsgReceiver
             *    @return:      void
             */
-            static void UnRegisterMsgReceiver(IMsgReceiver* msg_evt)
-            {
-                notifier_pool_->UnRegister(msg_evt);
-            }
+            static void UnRegisterMsgReceiver(IMsgReceiver* msg_evt);
 
             /**
             *    @brief:       Send quit message to all static threads.
             *    @method:      QuitStaticThread
             *    @return:      void
             */
-            static void QuitStaticThread()
-            {
-                static_pool_->QuitAll();
-            }
+            static void QuitStaticThread();
 
             /**
             *    @brief:       Send emergency quit message to all static threads.
             *    @method:      EmergencyQuitStaticThread
             *    @return:      void
             */
-            static void EmergencyQuitStaticThread()
-            {
-                static_pool_->EmergencyQuitAll();
-            }
+            static void EmergencyQuitStaticThread();
 
             /**
             *    @brief:       Wait for quitting.
@@ -127,11 +121,7 @@ namespace tthread
             *    @param:       unsigned int msec    waiting time
             *    @return:      void
             */
-            static void WaitAll(unsigned int msec = INFINITE)
-            {
-                static_pool_->WaitAll(msec);
-                runonce_pool_->WaitAll(msec);
-            }
+            static void WaitAll(unsigned int msec = INFINITE);
 
         private:
             static ScopedRefPtr<StaticThreadPool> static_pool_;

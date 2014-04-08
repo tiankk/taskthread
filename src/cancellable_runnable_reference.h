@@ -13,6 +13,19 @@
 #include "autolock.h"
 #include <tchar.h>
 
+#ifndef TASKTHREAD_LIB
+#ifdef TASKTHREAD_DLL
+#define TASKTHREAD_API _declspec(dllexport)
+#define TASKTHREAD_CLASS _declspec(dllexport)
+#else
+#define TASKTHREAD_API _declspec(dllimport)
+#define TASKTHREAD_CLASS _declspec(dllimport)
+#endif
+#else
+#define TASKTHREAD_API
+#define TASKTHREAD_CLASS
+#endif
+
 
 namespace tthread
 {
@@ -21,7 +34,11 @@ namespace tthread
         class CancellableRunnable;
     }
 
-    class CancellableRunnableReference
+#ifndef TASKTHREAD_LIB
+    template class TASKTHREAD_CLASS ScopedRefPtr<utility::RefPtrFlag>;
+#endif
+
+    class TASKTHREAD_CLASS CancellableRunnableReference
     {
     public:
         CancellableRunnableReference();

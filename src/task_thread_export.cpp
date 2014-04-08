@@ -47,4 +47,21 @@ namespace tthread
         utility::ThreadPool::EmergencyQuitStaticThread();
         utility::ThreadPool::WaitAll();
     }
+
+#ifdef TASKTHREAD_DLL
+    template void TASKTHREAD_API AsyncTask<ReturnValue>( const tstring & identifier,
+        utility::Callback<void(ReturnValue*)> task,
+        THREAD_ID run_thread_id,
+        IAsyncRunnableCallbackBase* callback,
+        THREAD_ID response_thread_id/* = DEFAULT*/,
+        bool emergency_run/* = false*/,
+        bool emergency_response/* = false*/,
+        CancellableRunnableReference* cancellable_ref/* = NULL*/);
+
+    template ScopedRefPtr<ReturnValue> TASKTHREAD_API SyncTask( utility::Callback<void(ReturnValue*)> task,
+        THREAD_ID run_thread_id,
+        bool emergency_run/* = false*/);
+
+#endif // TASKTHREAD_DLL
+
 } // namespace tthread

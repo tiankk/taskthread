@@ -11,17 +11,27 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
+		DebugDLL|Win32 = DebugDLL|Win32
 		Release|Win32 = Release|Win32
+		ReleaseDLL|Win32 = ReleaseDLL|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{CBA74473-9471-4775-ACE4-361C7633305A}.Debug|Win32.ActiveCfg = Debug|Win32
 		{CBA74473-9471-4775-ACE4-361C7633305A}.Debug|Win32.Build.0 = Debug|Win32
+		{CBA74473-9471-4775-ACE4-361C7633305A}.DebugDLL|Win32.ActiveCfg = DebugDLL|Win32
+		{CBA74473-9471-4775-ACE4-361C7633305A}.DebugDLL|Win32.Build.0 = DebugDLL|Win32
 		{CBA74473-9471-4775-ACE4-361C7633305A}.Release|Win32.ActiveCfg = Release|Win32
 		{CBA74473-9471-4775-ACE4-361C7633305A}.Release|Win32.Build.0 = Release|Win32
+		{CBA74473-9471-4775-ACE4-361C7633305A}.ReleaseDLL|Win32.ActiveCfg = ReleaseDLL|Win32
+		{CBA74473-9471-4775-ACE4-361C7633305A}.ReleaseDLL|Win32.Build.0 = ReleaseDLL|Win32
 		{C6EA9B8F-7841-4014-AB28-8A535990183B}.Debug|Win32.ActiveCfg = Debug|Win32
 		{C6EA9B8F-7841-4014-AB28-8A535990183B}.Debug|Win32.Build.0 = Debug|Win32
+		{C6EA9B8F-7841-4014-AB28-8A535990183B}.DebugDLL|Win32.ActiveCfg = DebugDLL|Win32
+		{C6EA9B8F-7841-4014-AB28-8A535990183B}.DebugDLL|Win32.Build.0 = DebugDLL|Win32
 		{C6EA9B8F-7841-4014-AB28-8A535990183B}.Release|Win32.ActiveCfg = Release|Win32
 		{C6EA9B8F-7841-4014-AB28-8A535990183B}.Release|Win32.Build.0 = Release|Win32
+		{C6EA9B8F-7841-4014-AB28-8A535990183B}.ReleaseDLL|Win32.ActiveCfg = ReleaseDLL|Win32
+		{C6EA9B8F-7841-4014-AB28-8A535990183B}.ReleaseDLL|Win32.Build.0 = ReleaseDLL|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

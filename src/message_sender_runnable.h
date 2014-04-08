@@ -94,7 +94,7 @@ namespace tthread
             ScopedRefPtr<IAsyncRunnableTaskCallback> task_callback_;
             IAsyncRunnableMsgCallback* msg_callback_;
             ReturnValue* ret_;
-            TaskThread* response_thread_;
+            IThreadTask* response_thread_;
             const tstring identifier_;
             bool emergency_response_;
         };

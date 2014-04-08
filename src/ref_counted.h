@@ -18,14 +18,28 @@ namespace tthread {
             class RefCountedThreadSafeBase
             {
             public:
-                bool HasOneRef() const;
+                bool HasOneRef() const
+                {
+                    return AtomicRefCountIsOne(&const_cast<RefCountedThreadSafeBase*>(this)->refcount_);
+                };
 
             protected:
-                RefCountedThreadSafeBase();
-                ~RefCountedThreadSafeBase();
+                RefCountedThreadSafeBase() : refcount_(0){};
+                ~RefCountedThreadSafeBase(){};
 
-                void AddRef() const;
-                bool Release() const;
+                void AddRef() const
+                {
+                    AtomicRefCountInc(&refcount_);
+                }
+
+                bool Release() const
+                {
+                    if (!AtomicRefCountDec(&refcount_))
+                    {
+                        return true;
+                    }
+                    return false;
+                }
 
             private:
                 mutable AtomicRefCount refcount_;

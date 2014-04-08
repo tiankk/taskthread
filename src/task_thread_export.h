@@ -15,6 +15,19 @@
 #include "message_sender_runnable.h"
 #include "cancellable_runnable_reference.h"
 
+#ifndef TASKTHREAD_LIB
+#ifdef TASKTHREAD_DLL
+#define TASKTHREAD_API _declspec(dllexport)
+#define TASKTHREAD_CLASS _declspec(dllexport)
+#else
+#define TASKTHREAD_API _declspec(dllimport)
+#define TASKTHREAD_CLASS _declspec(dllimport)
+#endif
+#else
+#define TASKTHREAD_API
+#define TASKTHREAD_CLASS
+#endif
+
 
 namespace tthread
 {
@@ -27,7 +40,7 @@ namespace tthread
      *    @param:        CancellableRunnableReference * cancellable_ref     object used for cancelling task
      *    @return:       void
      */
-    void AsyncTask( utility::Closure task,
+    void TASKTHREAD_API AsyncTask( utility::Closure task,
                     THREAD_ID run_thread_id,
                     bool emergency_run = false,
                     CancellableRunnableReference* cancellable_ref = NULL);
@@ -74,7 +87,7 @@ namespace tthread
      *    @param:        bool emergency_response                    whether commit callback-task to the emergency queue(effect only callback object is IAsyncRunnableTaskCallback)
      *    @return:       void
      */
-    void AsyncMessage(  const tstring & identifier,
+    void TASKTHREAD_API AsyncMessage(  const tstring & identifier,
                         ReturnValue* ret,
                         IAsyncRunnableCallbackBase* callback,
                         THREAD_ID response_thread_id = DEFAULT,
@@ -88,7 +101,7 @@ namespace tthread
      *    @param:        bool emergency_run         whether commit task to the emergency queue
      *    @return:       void
      */
-    void SyncTask(  utility::Closure task,
+     void TASKTHREAD_API SyncTask(  utility::Closure task,
                     THREAD_ID run_thread_id,
                     bool emergency_run = false);
 
@@ -115,14 +128,14 @@ namespace tthread
      *    @method:       SafeQuit
      *    @return:       void
      */
-    void SafeQuit();
+    void TASKTHREAD_API SafeQuit();
 
     /**
      *    @brief:        Safe quit without running tasks in queue.
      *    @method:       SafeEmergencyQuit
      *    @return:       void
      */
-    void SafeEmergencyQuit();
+    void TASKTHREAD_API SafeEmergencyQuit();
 } // namespace tthread
 
 #endif // __TASK_THREAD_EXPORT_H__

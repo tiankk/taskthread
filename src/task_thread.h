@@ -12,16 +12,50 @@
 #include "ref_counted.h"
 #include <string>
 
+#ifndef TASKTHREAD_LIB
+#ifdef TASKTHREAD_DLL
+#define TASKTHREAD_API _declspec(dllexport)
+#define TASKTHREAD_CLASS _declspec(dllexport)
+#else
+#define TASKTHREAD_API _declspec(dllimport)
+#define TASKTHREAD_CLASS _declspec(dllimport)
+#endif
+#else
+#define TASKTHREAD_API
+#define TASKTHREAD_CLASS
+#endif
+
 
 namespace tthread
 {
     namespace utility
     {
+        class TASKTHREAD_CLASS IThreadTask
+        {
+        public:
+            /**
+             *    @brief:       Post one task to normal queue.
+             *    @method:      PostTask
+             *    @param:       Closure & task
+             *    @return:      void
+             */
+            virtual void PostTask(const Closure& task) = 0;
+
+            /**
+             *    @brief:       Post one task to emergency queue.
+             *    @method:      PostEmergencyTask
+             *    @param:       Closure & task
+             *    @return:      void
+             */
+            virtual void PostEmergencyTask(const Closure& task) = 0;
+        };
+
         /**
          *    @biref:   thread wrapper class
          *              supporting two task queues managed by iocp, one is normal priority, one is emergency priority.
          */
         class TaskThread : public RefCountedThreadSafe<TaskThread>
+                         , public IThreadTask
         {
         public:
             TaskThread(bool run_once = false, const std::string& debug_name = "taskthread");

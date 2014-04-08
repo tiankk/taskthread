@@ -179,10 +179,10 @@ namespace tthread
             ReturnValueType* ret_;
 
             /// pointer of run thread object
-            TaskThread* run_thread_;
+            IThreadTask* run_thread_;
 
             /// pointer of response thread object
-            TaskThread* response_thread_;
+            IThreadTask* response_thread_;
 
             /// task
             Callback<void(ReturnValueType*)> func_;
