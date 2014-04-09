@@ -36,6 +36,7 @@ namespace tthread
             {
                 msg = iter->second->Register(msg_evt);
                 wnd = iter->second->GetWindowHandle();
+                return;
             }
             map_[id] = new Notifier();
             msg = map_[id]->Register(msg_evt);
