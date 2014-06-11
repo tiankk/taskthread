@@ -156,6 +156,7 @@ namespace tthread
 
         void Notifier::Notify(UINT message, WPARAM wParam, LPARAM lParam)
         {
+            AutoLockGuard lg(lock_); // ***********************lock***********************
             std::map<UINT, IMsgReceiver*>::const_iterator iter = msg_receiver_.find(message);
             if (iter != msg_receiver_.end())
             {
